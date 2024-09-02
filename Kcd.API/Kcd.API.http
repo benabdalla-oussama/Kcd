@@ -1,0 +1,6 @@
+@Kcd.API_HostAddress = http://localhost:5160
+
+GET {{Kcd.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
