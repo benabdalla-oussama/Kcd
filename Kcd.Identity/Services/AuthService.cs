@@ -68,6 +68,7 @@ public class AuthService(UserManager<KcdUser> userManager,
             Company = request.Company,
             Country = request.Country,
             Referral = request.Referral,
+            AvatarId = request.AvatarId,
             LockoutEnabled = true,
             EmailConfirmed = true
         };
@@ -114,7 +115,7 @@ public class AuthService(UserManager<KcdUser> userManager,
             new Claim(JwtRegisteredClaimNames.Name, user.Name),
             new Claim(Constants.Country_Claim_Type, user.Country),
             new Claim(Constants.Company_Claim_Type, user.Company),
-            new Claim(Constants.Avatar_URL_Claim_Type, user.AvatarUrl),
+            new Claim(Constants.Avatar_Id_Claim_Type, user.AvatarId),
             new Claim(Constants.Uid_Claim_Type, user.Id)
         }
         .Union(userClaims)

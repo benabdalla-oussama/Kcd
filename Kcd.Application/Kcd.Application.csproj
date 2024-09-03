@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Kcd.Domain\Kcd.Domain.csproj" />
     <ProjectReference Include="..\Kcd.Identity\Kcd.Identity.csproj" />
+    <ProjectReference Include="..\Kcd.Infrastructure\Kcd.Infrastructure.csproj" />
     <ProjectReference Include="..\Kcd.Persistence\Kcd.Persistence.csproj" />
   </ItemGroup>
 

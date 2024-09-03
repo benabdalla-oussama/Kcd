@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Kcd.Application.Validations;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Kcd.Application.Models;
@@ -45,6 +46,6 @@ public class UserApplicationRequest
     /// <summary>
     /// Avatar picture of the applicant.
     /// </summary>
-    [FileExtensions(Extensions = "jpg,jpeg,png", ErrorMessage = "Only image files (.jpg, .jpeg, .png) are allowed.")]
+    [CustomFileExtensions]
     public IFormFile Avatar { get; set; }
 }

@@ -1,4 +1,5 @@
-﻿using Kcd.Common.Enums;
+﻿using Kcd.Common;
+using Kcd.Common.Enums;
 using Kcd.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -70,10 +71,10 @@ public class KcdIdentityDbContext : IdentityDbContext<KcdUser>
             Country = "N/A",
             Company = "KCD",
             Referral = "Internal",
-            AvatarUrl = string.Empty // Assuming this is optional
+            AvatarId = string.Empty // Assuming this is optional
         };
 
-        adminUser.PasswordHash = GeneratePasswordHash(adminUser, "Admin*123"); //TODO: change this hard coded password
+        adminUser.PasswordHash = GeneratePasswordHash(adminUser, Constants.DefaultPassword); //TODO: change this hard coded password
         builder.Entity<KcdUser>().HasData(adminUser);
 
         builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>()

@@ -14,80 +14,80 @@ using Microsoft.Extensions.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace Kcd.Identity
+namespace Kcd.Identity;
+
+public static class IdentityServicesRegistration
 {
-    public static class IdentityServicesRegistration
+    public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
     {
-        public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionKey));
+        services.Configure<JwtSettings>(options =>
+            configuration.GetSection(JwtSettings.SectionKey).Bind(options));
 
-            services.AddDbContext<KcdIdentityDbContext>(options =>
-               options.UseSqlServer(configuration.GetConnectionString("IdentityDatabase"), x => x.EnableRetryOnFailure()));
+        services.AddDbContext<KcdIdentityDbContext>(options =>
+           options.UseSqlServer(configuration.GetConnectionString("IdentityDatabase"), x => x.EnableRetryOnFailure()));
 
-            services.AddIdentity<KcdUser, KcdRole>(opt =>
-                {
-                    opt.Password.RequiredLength = 7;
-                    opt.Password.RequireDigit = false;
-                    opt.Password.RequireUppercase = true;
-                    opt.User.RequireUniqueEmail = true;
-                    opt.SignIn.RequireConfirmedEmail = true;
-                })
-                .AddEntityFrameworkStores<KcdIdentityDbContext>()
-                .AddDefaultTokenProviders();
-
-            services.AddSingleton<ISystemClock, SystemClock>();
-            services.AddTransient<IAuthService, AuthService>();
-
-            services.AddJwtAuthentication(configuration)
-                .AddAuthorizationPolicies()
-                .AddAuthorizationBuilder();
-
-            return services;
-        }
-
-        public static IServiceCollection AddIdentityHealthCheks(this IServiceCollection services)
-        {
-            // Register identity health checks
-            services.AddHealthChecks()
-                .AddCheck<SqlServerHealthCheck>("SQL Server Health Check", HealthStatus.Unhealthy, new[] { "db", "sql" });
-
-            return services;
-        }
-
-        private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddAuthentication(options =>
+        services.AddIdentity<KcdUser, KcdRole>(opt =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
-                    ValidIssuer = configuration["JwtSettings:Issuer"],
-                    ValidAudience = configuration["JwtSettings:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"]))
-                };
-            });
+                opt.Password.RequiredLength = 7;
+                opt.Password.RequireDigit = false;
+                opt.Password.RequireUppercase = true;
+                opt.User.RequireUniqueEmail = true;
+                opt.SignIn.RequireConfirmedEmail = true;
+            })
+            .AddEntityFrameworkStores<KcdIdentityDbContext>()
+            .AddDefaultTokenProviders();
 
-            return services;
-        }
+        services.AddSingleton<ISystemClock, SystemClock>();
+        services.AddTransient<IAuthService, AuthService>();
 
-        private static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
+        services.AddJwtAuthentication(configuration)
+            .AddAuthorizationPolicies()
+            .AddAuthorizationBuilder();
+
+        return services;
+    }
+
+    public static IServiceCollection AddIdentityHealthCheks(this IServiceCollection services)
+    {
+        // Register identity health checks
+        services.AddHealthChecks()
+            .AddCheck<SqlServerHealthCheck>("SQL Server Health Check", HealthStatus.Unhealthy, new[] { "db", "sql" });
+
+        return services;
+    }
+
+    private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddAuthentication(options =>
         {
-            services.AddAuthorization(config =>
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
             {
-                config.AddPolicy(Policies.IsAdmin, Policies.IsAdminPolicy());
-                config.AddPolicy(Policies.IsUser, Policies.IsUserPolicy());
-            });
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero,
+                ValidIssuer = configuration["JwtSettings:Issuer"],
+                ValidAudience = configuration["JwtSettings:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"]))
+            };
+        });
 
-            return services;
-        }
+        return services;
+    }
+
+    private static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
+    {
+        services.AddAuthorization(config =>
+        {
+            config.AddPolicy(Policies.IsAdmin, Policies.IsAdminPolicy());
+            config.AddPolicy(Policies.IsUser, Policies.IsUserPolicy());
+        });
+
+        return services;
     }
 }

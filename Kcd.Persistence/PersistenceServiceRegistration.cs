@@ -16,12 +16,13 @@ public static class PersistenceServiceRegistration
     {
         services.AddDbContext<UserApplicationDatabaseContext>(options =>
         {
-            options.UseSqlite(configuration.GetConnectionString("HrDatabaseConnectionString"));
+            options.UseSqlite(configuration.GetConnectionString("UserApplicationDatabase"));
         });
 
         services.AddSingleton<ISystemClock, SystemClock>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUserApplicationRepository, UserApplicationRepository>();
+        services.AddScoped<IAvatarRepository, AvatarRepository>();
 
         return services;
     }

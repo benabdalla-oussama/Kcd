@@ -7,7 +7,7 @@ namespace Kcd.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController : ControllerBase
+public class AuthController : BaseController
 {
     private readonly IAuthService _authenticationService;
     private readonly ILogger<AuthController> _logger;

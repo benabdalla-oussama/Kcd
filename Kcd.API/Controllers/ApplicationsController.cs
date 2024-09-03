@@ -9,63 +9,46 @@ namespace Kcd.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ApplicationsController : ControllerBase
+public class ApplicationsController(IUserApplicationService userApplicationService, ILogger<ApplicationsController> logger) : BaseController
 {
-    private readonly IUserApplicationService _userApplicationService;
-    private readonly ILogger<ApplicationsController> _logger;
-
-    public ApplicationsController(IUserApplicationService userApplicationService, ILogger<ApplicationsController> logger)
-    {
-        _userApplicationService = userApplicationService;
-        _logger = logger;
-    }
+    private readonly IUserApplicationService _userApplicationService = userApplicationService;
+    private readonly ILogger<ApplicationsController> _logger = logger;
 
     /// <summary>
     /// Retrieves a list of user applications.
     /// </summary>
+    /// <param name="status">Optional filter by application status.</param>
     /// <returns>A list of user applications.</returns>
     [HttpGet]
     [Authorize(Policy = Policies.IsAdmin)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetApplications([FromQuery] ApplicationStatus? status = null)
     {
-        try
-        {
-            var applications = await _userApplicationService.GetApplicationsAsync(status);
-            return Ok(applications);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while retrieving applications.");
-            return StatusCode(500, "Internal server error");
-        }
+        var applications = await _userApplicationService.GetApplicationsAsync(status);
+        return Ok(applications);
     }
 
     /// <summary>
     /// Applies for a new user application.
     /// </summary>
-    /// <param name="UserApplicationRequest">The user application data transfer object.</param>
+    /// <param name="request">The user application data transfer object.</param>
     /// <returns>An IActionResult indicating success or failure.</returns>
     [HttpPost]
     [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Apply([FromForm] UserApplicationRequest request)
     {
-        try
+        if (!ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                // Log validation errors
-                _logger.LogWarning("Invalid application model received.");
-                return BadRequest(ModelState);
-            }
+            _logger.LogWarning("Invalid application model received.");
+            return BadRequest(ModelState);
+        }
 
-            var createdApplication = await _userApplicationService.ApplyAsync(request);
-            return CreatedAtAction(nameof(Apply), new { id = createdApplication.Id }, createdApplication);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while applying for user.");
-            return StatusCode(500, "Internal server error");
-        }
+        var createdApplication = await _userApplicationService.ApplyAsync(request);
+        return CreatedAtAction(nameof(Apply), new { id = createdApplication.Id }, createdApplication);
     }
 
     /// <summary>
@@ -75,18 +58,13 @@ public class ApplicationsController : ControllerBase
     /// <returns>An IActionResult indicating success or failure.</returns>
     [HttpPut("approve/{id}")]
     [Authorize(Policy = Policies.IsAdmin)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ApproveApplication(Guid id)
     {
-        try
-        {
-            await _userApplicationService.ApproveApplicationAsync(id);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while approving the application.");
-            return StatusCode(500, "Internal server error");
-        }
+        await _userApplicationService.ApproveApplicationAsync(id);
+        return Ok();
     }
 
     /// <summary>
@@ -96,19 +74,13 @@ public class ApplicationsController : ControllerBase
     /// <returns>An IActionResult indicating success or failure.</returns>
     [HttpPut("reject/{id}")]
     [Authorize(Policy = Policies.IsAdmin)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RejectApplication(Guid id)
     {
-        try
-        {
-            await _userApplicationService.RejectApplicationAsync(id);
-
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while rejecting the application.");
-            return StatusCode(500, "Internal server error");
-        }
+        await _userApplicationService.RejectApplicationAsync(id);
+        return Ok();
     }
 }
 

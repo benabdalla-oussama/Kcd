@@ -13,6 +13,5 @@ public class UserConfiguration : IEntityTypeConfiguration<KcdUser>
         builder.Property(e => e.Country).IsRequired().HasMaxLength(100);
         builder.Property(e => e.Company).HasMaxLength(100);
         builder.Property(e => e.Referral).HasMaxLength(100);
-        builder.Property(e => e.AvatarUrl).HasMaxLength(250);
     }
 }

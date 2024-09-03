@@ -7,6 +7,6 @@ public class Constants
     //Claims
     public static string Country_Claim_Type = "country";
     public static string Company_Claim_Type = "company";
-    public static string Avatar_URL_Claim_Type = "avatar_url";
+    public static string Avatar_Id_Claim_Type = "avatar_id";
     public static string Uid_Claim_Type = "uid";
 }

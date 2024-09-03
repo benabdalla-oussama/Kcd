@@ -6,27 +6,36 @@ using Kcd.Common.Exceptions;
 using Kcd.Domain;
 using Kcd.Identity.Models;
 using Kcd.Identity.Services;
+using Kcd.Infrastructure.Services;
 using Kcd.Persistence.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace Kcd.Application.Services;
 
-public class UserApplicationService(IMapper mapper,
-        IUserApplicationRepository repository,
-        IAuthService authService,
-        ILogger<UserApplicationService> logger) : IUserApplicationService
+/// <summary>
+/// Service responsible for handling user applications. 
+/// Provides functionality to apply, approve, reject, and retrieve user applications.
+/// </summary>
+public class ApplicationService(IMapper mapper,
+    IUserApplicationRepository repository,
+    IAuthService authService,
+    IAvatarService avatarService,
+    ILogger<ApplicationService> logger) : IUserApplicationService
 {
     private readonly IMapper _mapper = mapper;
     private readonly IUserApplicationRepository _repository = repository;
     private readonly IAuthService _authService = authService;
-    private readonly ILogger<UserApplicationService> _logger = logger;
+    private readonly IAvatarService _avatarService = avatarService;
+    private readonly ILogger<ApplicationService> _logger = logger;
+
 
     public async Task<UserApplicationResponse> ApplyAsync(UserApplicationRequest request)
     {
         _logger.LogInformation("Applying new user application for {Email}", request.Email);
 
-        var existingAppLication = await _repository.GetUserApplicationByEmail(request.Email);
-        if (existingAppLication != null)
+        // Check if application exists
+        var existingApplication = await _repository.GetUserApplicationByEmail(request.Email);
+        if (existingApplication != null)
         {
             _logger.LogWarning("User application with ID: {Email} already exists.", request.Email);
             throw new BadRequestException($"User application with ID: {request.Email} already exists.");
@@ -35,6 +44,15 @@ public class UserApplicationService(IMapper mapper,
         var application = _mapper.Map<UserApplication>(request);
         application.Status = ApplicationStatus.Pending;
 
+        // Save avatar
+        if (request.Avatar != null)
+        {
+            using var avatarStream = request.Avatar.OpenReadStream();
+            string avatarId = await _avatarService.SaveAvatarAsync(avatarStream, request.Avatar.FileName, request.Avatar.ContentType);
+            application.AvatarId = avatarId; // Assign the avatar ID
+        }
+
+        // Save application
         await _repository.CreateAsync(application);
         _logger.LogInformation("User application for {Email} successfully added.", request.Email);
 
@@ -77,11 +95,11 @@ public class UserApplicationService(IMapper mapper,
 
     public async Task<IEnumerable<UserApplicationResponse>> GetApplicationsAsync(ApplicationStatus? status = null)
     {
-        _logger.LogInformation("Fetching pending user applications");
+        _logger.LogInformation("Fetching user applications with status: {Status}", status);
 
-        var pendingApplications = await _repository.GetApplicationsAsync(status);
-        _logger.LogInformation("Retrieved {Count} pending user applications", pendingApplications.Count());
+        var applications = await _repository.GetApplicationsAsync(status);
+        _logger.LogInformation("Retrieved {Count} user applications", applications.Count());
 
-        return _mapper.Map<IEnumerable<UserApplicationResponse>>(pendingApplications);
+        return _mapper.Map<IEnumerable<UserApplicationResponse>>(applications);
     }
 }

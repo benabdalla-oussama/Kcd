@@ -1,4 +1,6 @@
-﻿using Kcd.Identity;
+﻿using Kcd.Application;
+using Kcd.Identity;
+using Kcd.Infrastructure;
 using Kcd.Persistence;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
@@ -9,6 +11,7 @@ namespace Kcd.Api
         public static IHostApplicationBuilder ApiServiesRegistration(this IHostApplicationBuilder builder)
         {
             builder.Services.AddApplicationServices();
+            builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddPersistenceServices(builder.Configuration);
             builder.Services.AddIdentityServices(builder.Configuration);
             return builder;

@@ -40,4 +40,7 @@ public class RegistrationRequest
 
     [Display(Name = "Referral")]
     public string Referral { get; set; }
+
+    [Display(Name = "AvatarId")]
+    public string AvatarId { get; set; }
 }

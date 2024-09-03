@@ -1,23 +1,24 @@
 ﻿using Kcd.Application.Interfaces;
 using Kcd.Application.Services;
 using Kcd.Identity.Services;
+using Kcd.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Kcd.Identity
+namespace Kcd.Application;
+
+public static class ApplicationServicesRegistration
 {
-    public static class ApplicationServicesRegistration
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-        {
+        // Register Application Services
+        services.AddScoped<IUserApplicationService, ApplicationService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IFileValidator, FileValidator>();
+        services.AddScoped<IAvatarService, AvatarService>();
 
-            // Register Application Services
-            services.AddScoped<IUserApplicationService, UserApplicationService>();
-            services.AddScoped<IAuthService, AuthService>();
+        // Register AutoMapper
+        services.AddAutoMapper(typeof(ApplicationServicesRegistration).Assembly);
 
-            // Register AutoMapper
-            services.AddAutoMapper(typeof(ApplicationServicesRegistration).Assembly);
-
-            return services;
-        }
+        return services;
     }
 }
