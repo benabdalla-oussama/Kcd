@@ -72,12 +72,9 @@ namespace Kcd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AvatarId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Company")
-                        .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Country")
@@ -108,8 +105,6 @@ namespace Kcd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Referral")
-                        .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")

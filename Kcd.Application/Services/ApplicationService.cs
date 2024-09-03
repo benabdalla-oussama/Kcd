@@ -70,10 +70,10 @@ public class ApplicationService(IMapper mapper,
             throw new NotFoundException("Application", applicationId);
         }
 
+        await _authService.RegisterAsync(_mapper.Map<RegistrationRequest>(application));
+
         application.Status = ApplicationStatus.Approved;
         await _repository.UpdateAsync(application);
-
-        await _authService.RegisterAsync(_mapper.Map<RegistrationRequest>(application));
         _logger.LogInformation("User application with ID: {ApplicationId} approved", applicationId);
     }
 

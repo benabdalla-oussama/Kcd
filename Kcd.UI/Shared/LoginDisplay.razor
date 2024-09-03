@@ -1,0 +1,19 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject IAuthService AuthService
+
+<AuthorizeView>
+    <Authorized>
+        <a href="/profile">Hello, @context.User.Identity?.Name!</a>
+@*         <a href="https://stayrbackendmessagingapi.orangegrass-f2b1defa.westeurope.azurecontainerapps.io/hangfire" target="_blank">HangFire Dashboard</a>
+ *@        <a href="/logout">Log out</a>
+    </Authorized>
+    <NotAuthorized>
+        <a href="/register">User Application</a>
+        <a href="/login">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code{
+
+}

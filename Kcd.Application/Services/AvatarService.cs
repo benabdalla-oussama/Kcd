@@ -11,11 +11,11 @@ namespace Kcd.Application.Services;
 
 public class AvatarService(IEnumerable<IAvatarStorageStrategy> storageStrategies, IAvatarRepository repository, IMapper mapper, IOptions<AvatarSettings> options) : IAvatarService
 {
-    private readonly IEnumerable<IAvatarStorageStrategy> _storageStrategies;
-    private readonly IAvatarRepository _repository;
+    private readonly IEnumerable<IAvatarStorageStrategy> _storageStrategies = storageStrategies;
+    private readonly IAvatarRepository _repository = repository;
     private readonly IMapper _mapper = mapper;
 
-    private readonly AvatarSettings _settings;
+    private readonly AvatarSettings _settings = options.Value;
 
     public async Task<string> SaveAvatarAsync(Stream stream, string fileName, string contentType)
     {

@@ -49,8 +49,6 @@ public class AuthService(UserManager<KcdUser> userManager,
 
         var token = await GenerateToken(user);
 
-        await _userManager.UpdateAsync(user);
-
         return new AuthResponse
         {
             Token = token

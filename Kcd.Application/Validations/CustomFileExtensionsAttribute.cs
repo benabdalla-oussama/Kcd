@@ -15,7 +15,7 @@ public class CustomFileExtensionsAttribute : ValidationAttribute
             throw new InvalidOperationException("FileValidator service is not registered.");
         }
 
-        if (value is IFormFile file)
+        if (value != null && value is IFormFile file)
         {
             return fileValidator.Validate(file);
         }

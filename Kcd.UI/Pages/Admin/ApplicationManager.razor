@@ -1,0 +1,93 @@
+﻿@page "/admin/application-manager"
+@using Kcd.UI.Models
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = Policies.IsAdmin)]
+@inject HttpClient httpClient
+
+<h3>Application Manager</h3>
+
+<AuthorizeView Policy="IsAdmin" Context="authContext">
+    <Authorized>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Filter Applications</div>
+                <div class="float-right">
+                    <EditForm Model="filter" OnValidSubmit="FilterApplications">
+                        <InputSelect @bind-Value="filter.Status">
+                            <option value="">All</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                        </InputSelect>
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </EditForm>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (applications != null)
+                {
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Country</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var app in applications)
+                            {
+                                <tr>
+                                    <td>@app.Name</td>
+                                    <td>@app.Email</td>
+                                    <td>@app.Country</td>
+                                    <td style="color: @(app.Status == ApplicationStatus.Pending ? "orange" : app.Status == ApplicationStatus.Approved ? "green" : "red")">
+                                        @app.Status
+                                    </td>
+                                    <td>
+                                        @if (app.Status == ApplicationStatus.Pending)
+                                        {
+                                            <button @onclick="() => ApproveApplication(app.Id)">Approve</button>
+                                            <button @onclick="() => RejectApplication(app.Id)">Reject</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No application loaded.</p>
+                }
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <p>You're not authorized to view this page.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private List<UserApplicationResponse> applications;
+    private ApplicationFilter filter = new ApplicationFilter();
+
+    private async Task FilterApplications()
+    {
+        applications = await httpClient.GetFromJsonAsync<List<UserApplicationResponse>>($"applications?status={filter.Status}");
+    }
+
+    private async Task ApproveApplication(Guid id)
+    {
+        await httpClient.PutAsync($"applications/approve/{id}", null);
+        await FilterApplications();
+    }
+
+    private async Task RejectApplication(Guid id)
+    {
+        await httpClient.PutAsync($"applications/reject/{id}", null);
+        await FilterApplications();
+    }
+}

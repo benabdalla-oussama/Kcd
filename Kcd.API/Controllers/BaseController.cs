@@ -15,4 +15,9 @@ public abstract class BaseController : ControllerBase
     {
         return HttpContext.User.Claims.FirstOrDefault(c => c.Type == Constants.Avatar_Id_Claim_Type)?.Value;
     }
+
+    protected string? GetUserId()
+    {
+        return HttpContext.User.Claims.FirstOrDefault(c => c.Type == Constants.Uid_Claim_Type)?.Value;
+    }
 }

@@ -24,7 +24,8 @@ public class DatabaseAvatarStorageStrategy : IAvatarStorageStrategy
             ContentType = contentType,
             StorageStrategy = StorageStrategy,
             Size = avatarData.Length,
-            Content = avatarData
+            Content = avatarData,
+            Url = string.Empty
         };
     }
 

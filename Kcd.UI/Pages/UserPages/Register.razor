@@ -1,0 +1,83 @@
+﻿@page "/register"
+@using Kcd.UI.Models
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h3>Register</h3>
+
+<EditForm Model="application" OnValidSubmit="@HandleRegistration">
+    <DataAnnotationsValidator />
+    <div class="row">
+        <div class="col-sm-6 mb-3">
+            <label for="Name">Name</label>
+            <InputText id="Name" @bind-Value="application.Name" class="form-control" />
+            <ValidationMessage For="@(() => application.Name)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="application.Email" class="form-control" />
+        <ValidationMessage For="@(() => application.Email)" />
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 mb-3">
+            <label for="Country">Country</label>
+            <InputText id="Country" @bind-Value="application.Country" class="form-control" />
+            <ValidationMessage For="@(() => application.Country)" />
+        </div>
+        <div class="col-sm-6 mb-3">
+            <label for="Company">Company</label>
+            <InputText id="Company" @bind-Value="application.Company" class="form-control" />
+            <ValidationMessage For="@(() => application.Company)" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 mb-3">
+            <label for="Referral">Referral</label>
+            <InputText id="Referral" @bind-Value="application.Referral" placeholder="How did you hear about us?" class="form-control" />
+            <ValidationMessage For="@(() => application.Referral)" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 mb-3">
+            <label for="Avatar">Avatar</label>
+            <InputFile OnChange="HandleFileSelected" class="form-control" />
+        </div>
+    </div>
+
+    
+    <button type="submit" class="btn btn-primary w-100">Apply</button>
+
+    <div class="@messageCssClass">
+        <span>@message</span>
+    </div>
+</EditForm>
+
+
+@code {
+    UserApplicationRequest application = new UserApplicationRequest();
+    string message = string.Empty;
+    string messageCssClass = string.Empty;
+
+    async Task HandleRegistration()
+    {
+        var result = await AuthService.Register(application);
+        if (result != null)
+            NavigationManager.NavigateTo("/login");
+        else
+            messageCssClass = "text-danger";
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        // var buffer = new byte[file.Size];
+        // await file.OpenReadStream().ReadAsync(buffer);
+        application.Avatar = file;
+        //application.AvatarFileName = file.Name;
+    }
+}

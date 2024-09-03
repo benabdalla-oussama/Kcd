@@ -1,0 +1,51 @@
+﻿@page "/profile"
+@inject HttpClient Http
+@using Kcd.UI.Models
+@using Kcd.Common
+@using System.IdentityModel.Tokens.Jwt
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject AuthenticationStateProvider AuthenticationService
+@inject HttpClient httpClient
+
+<h3>Profile</h3>
+
+@if (user != null)
+{
+    <p>Name: @user.Name</p>
+    <p>Email: @user.Email</p>
+    <p>Country: @user.Country</p>
+    <p>Company: @user.Company</p>
+    <img src="@avatarUrl" alt="Profile Picture" />
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+
+    private UserProfile user;
+    string avatarUrl = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationService.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirst(Constants.Uid_Claim_Type)?.Value;
+        var email = authState.User.FindFirst(JwtRegisteredClaimNames.Email)?.Value;
+        var name = authState.User.FindFirst(JwtRegisteredClaimNames.Name)?.Value;
+        var country = authState.User.FindFirst(Constants.Country_Claim_Type)?.Value;
+        var company = authState.User.FindFirst(Constants.Company_Claim_Type)?.Value;
+        var avatarId = authState.User.FindFirst(Constants.Avatar_Id_Claim_Type)?.Value;
+        user = new UserProfile()
+        {
+            Id = userId,
+            Email = email,
+            Name = name,
+            Country = country,
+            Company = company,
+            AvatarId = avatarId
+        };
+        avatarUrl = $"{httpClient.BaseAddress.AbsoluteUri}avatar/{avatarId}";
+    }
+}

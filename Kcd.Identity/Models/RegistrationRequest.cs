@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Kcd.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace Kcd.Identity.Models;
 
@@ -24,12 +25,12 @@ public class RegistrationRequest
     [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
     [DataType(DataType.Password)]
     [Display(Name = "Password")]
-    public string Password { get; set; } = string.Empty;
+    public string Password { get; set; } = Constants.DefaultPassword;
 
     [DataType(DataType.Password)]
     [Display(Name = "Confirm password")]
     [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-    public string ConfirmPassword { get; set; } = string.Empty;
+    public string ConfirmPassword { get; set; } = Constants.DefaultPassword;
 
     [Required]
     [Display(Name = "Country")]
