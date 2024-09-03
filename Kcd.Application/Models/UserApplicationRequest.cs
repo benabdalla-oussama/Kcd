@@ -1,7 +1,6 @@
 ﻿using Kcd.Application.Validations;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace Kcd.Application.Models;
 

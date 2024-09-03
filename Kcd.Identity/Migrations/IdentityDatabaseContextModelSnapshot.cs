@@ -4,7 +4,6 @@ using Kcd.Identity.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kcd.Identity.Migrations
 {
     [DbContext(typeof(IdentityDatabaseContext))]
-    [Migration("20240903171036_init")]
-    partial class init
+    partial class IdentityDatabaseContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,11 +31,9 @@ namespace Kcd.Identity.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("AvatarId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Company")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -87,7 +82,6 @@ namespace Kcd.Identity.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Referral")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -116,11 +110,11 @@ namespace Kcd.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c627d672-a80a-486f-98f4-4d6b5ec0e535",
+                            Id = "d0a48569-9bff-499d-8811-2fb0301cfeeb",
                             AccessFailedCount = 0,
                             AvatarId = "",
                             Company = "KCD",
-                            ConcurrencyStamp = "dc33976f-e32f-41f1-9732-1717c7db2d5e",
+                            ConcurrencyStamp = "ac2db4cb-0881-4947-9eaf-22636bacb68d",
                             Country = "N/A",
                             Email = "admin@admin.com",
                             EmailConfirmed = true,
@@ -128,10 +122,10 @@ namespace Kcd.Identity.Migrations
                             Name = "Admin User",
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHKS+em86Zi3wR3ioU+F/dwGrbEgMteTFEKGl+Y0uWMQ5xW92okqfBGBnQHiE0FkhA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEC0tUVwNqfl/pGRRoVcRCQrcF/61gjx22Omr2W8Gv+Er9NY4QlmWI+8AFtdKG9lB6Q==",
                             PhoneNumberConfirmed = false,
                             Referral = "Internal",
-                            SecurityStamp = "1a021ac6-b7a1-4fa3-9305-22841a2e3308",
+                            SecurityStamp = "fd4342f4-f1c5-4c5b-8d75-327109e42acf",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -255,8 +249,8 @@ namespace Kcd.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "c627d672-a80a-486f-98f4-4d6b5ec0e535",
-                            RoleId = "0cf7e196-eae2-4959-adaf-ac7faac388aa"
+                            UserId = "d0a48569-9bff-499d-8811-2fb0301cfeeb",
+                            RoleId = "baef5bf9-5189-42d2-8d20-cc79ad317556"
                         });
                 });
 
@@ -292,14 +286,14 @@ namespace Kcd.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4ca1a567-1830-453d-a3dc-a60a5f2abe22",
+                            Id = "fa828355-eff9-41f2-8c12-2d3a1fd1fd20",
                             Name = "User",
                             NormalizedName = "USER",
                             Description = "User"
                         },
                         new
                         {
-                            Id = "0cf7e196-eae2-4959-adaf-ac7faac388aa",
+                            Id = "baef5bf9-5189-42d2-8d20-cc79ad317556",
                             Name = "Admin",
                             NormalizedName = "ADMIN",
                             Description = "Admin"

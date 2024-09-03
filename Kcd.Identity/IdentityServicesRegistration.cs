@@ -23,7 +23,7 @@ public static class IdentityServicesRegistration
         services.Configure<JwtSettings>(options =>
             configuration.GetSection(JwtSettings.SectionKey).Bind(options));
 
-        services.AddDbContext<KcdIdentityDbContext>(options =>
+        services.AddDbContext<IdentityDatabaseContext>(options =>
            options.UseSqlServer(configuration.GetConnectionString("IdentityDatabase"), x => x.EnableRetryOnFailure()));
 
         services.AddIdentity<KcdUser, KcdRole>(opt =>
@@ -34,7 +34,7 @@ public static class IdentityServicesRegistration
                 opt.User.RequireUniqueEmail = true;
                 opt.SignIn.RequireConfirmedEmail = true;
             })
-            .AddEntityFrameworkStores<KcdIdentityDbContext>()
+            .AddEntityFrameworkStores<IdentityDatabaseContext>()
             .AddDefaultTokenProviders();
 
         services.AddSingleton<ISystemClock, SystemClock>();

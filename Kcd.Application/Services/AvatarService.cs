@@ -32,7 +32,7 @@ public class AvatarService(IEnumerable<IAvatarStorageStrategy> storageStrategies
         return entity.Id.ToString();
     }
 
-    public async Task<(Stream, string)> GetAvatarAsync(string id)
+    public async Task<(Stream, string, string)> GetAvatarAsync(string id)
     {
         if (!Guid.TryParse(id, out var avatarId))
             throw new FileNotFoundException("Avatar not found.");
@@ -43,7 +43,7 @@ public class AvatarService(IEnumerable<IAvatarStorageStrategy> storageStrategies
 
         var strategy = GetStrategy();
         var model = _mapper.Map<AvatarModel>(avatar);
-        return (await strategy.GetAvatarAsync(model), model.ContentType);
+        return (await strategy.GetAvatarAsync(model), model.ContentType, model.FileName);
     }
 
     private IAvatarStorageStrategy GetStrategy()

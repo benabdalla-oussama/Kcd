@@ -47,6 +47,16 @@ namespace Stayr.Backend.Api.Middleware
                         Detail = NotFound.InnerException?.Message,
                     };
                     break;
+                case FileNotFoundException FileNotFound:
+                    statusCode = HttpStatusCode.NotFound;
+                    problem = new ProblemDetails
+                    {
+                        Title = FileNotFound.Message,
+                        Status = (int)statusCode,
+                        Type = nameof(FileNotFoundException),
+                        Detail = FileNotFound.InnerException?.Message,
+                    };
+                    break;
                 default:
                     problem = new ProblemDetails
                     {

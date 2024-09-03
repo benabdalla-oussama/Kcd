@@ -29,7 +29,7 @@ public class AvatarController(IAvatarService avatarService) : BaseController
                 return NotFound("Avatar not found.");
             }
 
-            return File(avatarStream.Stream, avatarStream.ContentType);
+            return File(avatarStream.Stream, avatarStream.ContentType, avatarStream.FileName);
         }
         catch (FileNotFoundException)
         {

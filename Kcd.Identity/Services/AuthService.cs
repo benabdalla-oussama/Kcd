@@ -112,8 +112,8 @@ public class AuthService(UserManager<KcdUser> userManager,
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Name, user.Name),
             new Claim(Constants.Country_Claim_Type, user.Country),
-            new Claim(Constants.Company_Claim_Type, user.Company),
-            new Claim(Constants.Avatar_Id_Claim_Type, user.AvatarId),
+            new Claim(Constants.Company_Claim_Type, user.Company ?? string.Empty),
+            new Claim(Constants.Avatar_Id_Claim_Type, user.AvatarId ?? string.Empty),
             new Claim(Constants.Uid_Claim_Type, user.Id)
         }
         .Union(userClaims)

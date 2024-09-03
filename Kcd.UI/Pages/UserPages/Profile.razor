@@ -1,5 +1,5 @@
 ﻿@page "/profile"
-@inject HttpClient Http
+@inject HttpClient httpClient
 @using Kcd.UI.Models
 @using Kcd.Common
 @using System.IdentityModel.Tokens.Jwt
@@ -16,7 +16,10 @@
     <p>Email: @user.Email</p>
     <p>Country: @user.Country</p>
     <p>Company: @user.Company</p>
-    <img src="@avatarUrl" alt="Profile Picture" />
+    @if (!string.IsNullOrEmpty(avatarBase64))
+    {
+        <img src="data:@avatarContentType;base64,@avatarBase64" alt="Profile Picture" />
+    }
 }
 else
 {
@@ -26,7 +29,8 @@ else
 @code {
 
     private UserProfile user;
-    string avatarUrl = string.Empty;
+    private string avatarBase64;
+    private string avatarContentType = "image/png"; // Default to png
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,6 +50,28 @@ else
             Company = company,
             AvatarId = avatarId
         };
-        avatarUrl = $"{httpClient.BaseAddress.AbsoluteUri}avatar/{avatarId}";
+
+        try
+        {
+            if (!string.IsNullOrEmpty(avatarId))
+            {
+                var response = await httpClient.GetAsync($"avatar/{avatarId}");
+                response.EnsureSuccessStatusCode();
+
+                var avatarBytes = await response.Content.ReadAsByteArrayAsync();
+                avatarBase64 = Convert.ToBase64String(avatarBytes);
+
+                // Get content type from response headers
+                if (response.Content.Headers.ContentType != null)
+                {
+                    avatarContentType = response.Content.Headers.ContentType.ToString();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions, e.g., show a default image or error message
+            Console.WriteLine($"Failed to load avatar: {ex.Message}");
+        }
     }
 }

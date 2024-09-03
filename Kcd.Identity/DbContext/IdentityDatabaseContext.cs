@@ -10,9 +10,9 @@ namespace Kcd.Identity.DbContext;
 /// <summary>
 /// Represents the Identity database context using the KcdUser entity.
 /// </summary>
-public class KcdIdentityDbContext : IdentityDbContext<KcdUser>
+public class IdentityDatabaseContext : IdentityDbContext<KcdUser>
 {
-    public KcdIdentityDbContext(DbContextOptions<KcdIdentityDbContext> options)
+    public IdentityDatabaseContext(DbContextOptions<IdentityDatabaseContext> options)
         : base(options)
     {
     }
@@ -21,7 +21,7 @@ public class KcdIdentityDbContext : IdentityDbContext<KcdUser>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        builder.ApplyConfigurationsFromAssembly(typeof(KcdIdentityDbContext).Assembly);
+        builder.ApplyConfigurationsFromAssembly(typeof(IdentityDatabaseContext).Assembly);
 
         builder.Entity<KcdUser>(b => { b.ToTable("Users"); });
         builder.Entity<IdentityUserClaim<string>>(b => { b.ToTable("UserClaims"); });

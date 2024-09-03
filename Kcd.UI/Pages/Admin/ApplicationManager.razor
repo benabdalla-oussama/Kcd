@@ -29,6 +29,7 @@
                     <table class="table table-striped table-hover">
                         <thead class="table-dark">
                             <tr>
+                                <th>Avatar</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Country</th>
@@ -40,6 +41,12 @@
                             @foreach (var app in applications)
                             {
                                 <tr>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(app.AvatarBase64))
+                                        {
+                                            <img src="data:@app.AvatarContentType;base64,@app.AvatarBase64" alt="Avatar" width="50" height="50" />
+                                        }
+                                    </td>
                                     <td>@app.Name</td>
                                     <td>@app.Email</td>
                                     <td>@app.Country</td>
@@ -77,6 +84,11 @@
     private async Task FilterApplications()
     {
         applications = await httpClient.GetFromJsonAsync<List<UserApplicationResponse>>($"applications?status={filter.Status}");
+        // Load avatars for each application
+        foreach (var app in applications)
+        {
+            await LoadAvatarAsync(app);
+        }
     }
 
     private async Task ApproveApplication(Guid id)
@@ -89,5 +101,32 @@
     {
         await httpClient.PutAsync($"applications/reject/{id}", null);
         await FilterApplications();
+    }
+
+    private async Task LoadAvatarAsync(UserApplicationResponse app)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(app.AvatarId))
+            {
+                return;
+            }
+
+            var response = await httpClient.GetAsync($"avatar/{app.AvatarId}");
+            response.EnsureSuccessStatusCode();
+
+            var avatarBytes = await response.Content.ReadAsByteArrayAsync();
+            app.AvatarBase64 = Convert.ToBase64String(avatarBytes);
+
+            if (response.Content.Headers.ContentType != null)
+            {
+                app.AvatarContentType = response.Content.Headers.ContentType.ToString();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log the error or handle it (you can show a default avatar or error message)
+            Console.WriteLine($"Failed to load avatar for {app.Name}: {ex.Message}");
+        }
     }
 }
