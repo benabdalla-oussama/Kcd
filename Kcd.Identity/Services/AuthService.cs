@@ -29,7 +29,6 @@ public class AuthService(UserManager<KcdUser> userManager,
     private readonly ISystemClock _clock = clock;
     private readonly ILogger<AuthService> _logger = logger;
     private readonly JwtSettings _jwtSettings = jwtSettings.Value;
-    //private readonly IServiceBusMessagePublisher _messagePublisher; TODO
 
     public async Task<AuthResponse> LoginAsync(AuthRequest request)
     {

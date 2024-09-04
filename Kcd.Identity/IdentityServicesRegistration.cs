@@ -1,4 +1,4 @@
-﻿using Kcd.Identity.DbContext;
+﻿using Kcd.Identity.DatabaseContext;
 using Kcd.Identity.Entities;
 using Kcd.Identity.HealthChecks;
 using Kcd.Identity.Helpers;

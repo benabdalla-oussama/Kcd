@@ -1,4 +1,4 @@
-﻿using Kcd.Identity.DbContext;
+﻿using Kcd.Identity.DatabaseContext;
 using Kcd.Persistence.DatabaseContext;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;

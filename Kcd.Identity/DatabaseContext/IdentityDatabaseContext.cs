@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Kcd.Identity.DbContext;
+namespace Kcd.Identity.DatabaseContext;
 
 /// <summary>
 /// Represents the Identity database context using the KcdUser entity.
