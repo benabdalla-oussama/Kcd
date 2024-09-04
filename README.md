@@ -20,6 +20,9 @@ Kcd API is a .NET 8-based application that serves as a comprehensive solution fo
   - **`Kcd.API.Tests`**: Integration tests for the API, including tests for the `ApplicationsController` using Testcontainers.
   - **`Kcd.Core.Tests`**: Unit tests for core application logic.
   - **`Kcd.Infrastructure.Tests`**: Unit tests for infrastructure components.
+  - **`K6Performance`**: Contains the `K6` performance test scripts for stress and load testing of the API.
+- **`Benchmarks`**:
+  - **`Kcd.Benchmarks`**: Contains benchmark tests using `BenchmarkDotNet` to analyze API performance.
 
 ## Setup Instructions
 
@@ -60,7 +63,16 @@ To set up and run the project, follow these steps:
      ```sh
      dotnet test
      ```
-
+     
+5. **Run K6 Performance Tests**:
+   - Ensure k6 is install from the official website [K6 Link]([www.google.com](https://grafana.com/docs/k6/latest/set-up/install-k6/)).
+   - Navigate to the Tests/K6Performance directory.
+   - Ensure the API is running (either via Docker or locally).
+   - Restore dependencies and run the application:
+     ```sh
+     k6 run k6-performance-test.js
+     ```
+     
 ## Implemented UI Scenarios
 
 - **Login**: Users can authenticate and access the application.
@@ -94,7 +106,6 @@ To set up and run the project, follow these steps:
 For performance analysis, consider using these tools:
 
 - **BenchmarkDotNet**: Ideal for micro-benchmarking .NET code to profile and optimize specific methods or code snippets.
-- **Apache JMeter**: Load testing tool for simulating multiple users and measuring response times.
 - **k6**: Developer-centric tool for load testing with scripting capabilities.
 
 ## Notes
