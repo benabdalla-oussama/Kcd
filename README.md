@@ -65,7 +65,7 @@ To set up and run the project, follow these steps:
      ```
      
 5. **Run K6 Performance Tests**:
-   - Ensure k6 is install from the official website [K6 Link]([www.google.com](https://grafana.com/docs/k6/latest/set-up/install-k6/)).
+   - Ensure k6 is install from the official website: [Install k6](https://grafana.com/docs/k6/latest/set-up/install-k6/).
    - Navigate to the Tests/K6Performance directory.
    - Ensure the API is running (either via Docker or locally).
    - Restore dependencies and run the application:
