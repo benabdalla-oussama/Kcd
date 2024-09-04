@@ -11,9 +11,17 @@ public class FileSystemAvatarStorageStrategy(IOptions<AvatarSettings> options) :
 
     public async Task<AvatarModel> SaveAvatarAsync(Stream stream, string fileName, string contentType)
     {
-        var filePath = Path.Combine(_settings.FileSystemPath, fileName);
-        using var fileStream = new FileStream(filePath, FileMode.Create);
+        // Ensure the directory exists
+        var directoryPath = _settings.FileSystemPath;
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        var filePath = Path.Combine(directoryPath, fileName);
+        using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
         await stream.CopyToAsync(fileStream);
+
         return new AvatarModel
         {
             FileName = fileName,

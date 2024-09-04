@@ -8,7 +8,6 @@ namespace Kcd.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Route("v1/")]
 [Authorize]
 public class AvatarController(IAvatarService avatarService, ILogger<AvatarController> logger) : BaseController
 {

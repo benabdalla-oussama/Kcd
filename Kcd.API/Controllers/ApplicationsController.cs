@@ -9,7 +9,6 @@ namespace Kcd.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Route("v1/")]
 public class ApplicationsController(IApplicationService applicationService, ILogger<ApplicationsController> logger) : BaseController
 {
     private readonly IApplicationService _applicationService = applicationService;

@@ -81,6 +81,10 @@
     private List<UserApplicationResponse> applications;
     private ApplicationFilter filter = new ApplicationFilter();
 
+    protected override async Task OnInitializedAsync(){
+        await FilterApplications();
+    }
+
     private async Task FilterApplications()
     {
         applications = await httpClient.GetFromJsonAsync<List<UserApplicationResponse>>($"applications?status={filter.Status}");

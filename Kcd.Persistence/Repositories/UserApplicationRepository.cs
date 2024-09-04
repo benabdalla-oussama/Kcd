@@ -12,7 +12,7 @@ public class UserApplicationRepository : GenericRepository<UserApplication>, IUs
     }
 
     public async Task<IEnumerable<UserApplication>> GetApplicationsAsync(ApplicationStatus? status = null, CancellationToken cancellationToken = default) =>
-         await _context.UserApplications.Where(q => status == null || q.Status == status).ToListAsync(cancellationToken);
+         await _context.UserApplications.Where(q => status == null || q.Status == status).OrderByDescending(x => x.DateCreated).ToListAsync(cancellationToken);
 
     public async Task<UserApplication?> GetUserApplicationByEmail(string email, CancellationToken cancellationToken = default) =>
          await _context.UserApplications.FirstOrDefaultAsync(q => q.Email == email, cancellationToken);
