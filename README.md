@@ -50,8 +50,8 @@ To set up and run the project, follow these steps:
      ```
    - The UI should be available on `http://localhost:5058` (or your configured port).
    - Note: For testing purposes, a seed admin user is available with the following credentials:
-      Email: admin@admin.com
-      Password: Azerty123456789!
+     - **`Email`**: `admin@admin.com`
+     - **`Password`**: `Azerty123456789!`
 
 4. **Run Tests**:
    - Navigate to the respective test project directory.
