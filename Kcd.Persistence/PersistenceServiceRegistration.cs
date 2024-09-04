@@ -27,6 +27,13 @@ public static class PersistenceServiceRegistration
         return services;
     }
 
+    public static void ApplyPersistenceMigrations(this IServiceProvider services)
+    {
+        // Apply migrations for User application database context
+        var userAppDbContext = services.GetRequiredService<UserApplicationDatabaseContext>();
+        userAppDbContext.Database.Migrate();
+    }
+
     public static IServiceCollection AddPersistenceHealthCheks(this IServiceCollection services)
     {
         // Register persistence health checks

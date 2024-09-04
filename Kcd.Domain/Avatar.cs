@@ -3,6 +3,9 @@ using Kcd.Domain.Common;
 
 namespace Kcd.Domain;
 
+/// <summary>
+/// Represents a user avatar image.
+/// </summary>
 public class Avatar : BaseEntity
 {
     public string FileName { get; set; }

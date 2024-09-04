@@ -9,7 +9,7 @@ using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Stayr.Backend.Common.Logging;
+using Stayr.Backend.Common.Observability;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -71,7 +71,8 @@ public class AuthService(UserManager<KcdUser> userManager,
             EmailConfirmed = true
         };
 
-        var result = await _userManager.CreateAsync(user, request.Password);
+        //TODO: send reset password request instead of using a default password
+        var result = await _userManager.CreateAsync(user, Constants.DefaultPassword);
 
         if (result.Succeeded)
         {

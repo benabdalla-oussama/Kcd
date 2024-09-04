@@ -5,6 +5,13 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Kcd.Identity.HealthChecks;
 
+/// <summary>
+/// Performs a health check for a SQL Server database connection.
+/// </summary>
+/// <remarks>
+/// This class checks the connectivity and health of the SQL Server database specified in the application's configuration.
+/// It inherits from <see cref="DefaultHealthCheck"/> and uses the connection string named "IdentityDatabase" from the configuration.
+/// </remarks>
 public class SqlServerHealthCheck(IConfiguration configuration) : DefaultHealthCheck("SQL Server")
 {
     private readonly string _connectionString = configuration.GetConnectionString("IdentityDatabase");

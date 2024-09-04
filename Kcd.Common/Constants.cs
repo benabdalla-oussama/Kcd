@@ -2,6 +2,13 @@
 
 public class Constants
 {
+    /// <summary>
+    /// Default password used for development and testing environments.
+    /// <remarks>
+    /// <para>TODO: This default password is intended for development and testing purposes only. 
+    /// It should be removed or replaced with a secure password policy in production environments.</para>
+    /// </remarks>
+    /// </summary>
     public static string DefaultPassword = "Azerty123456789!.";
 
     //Claims

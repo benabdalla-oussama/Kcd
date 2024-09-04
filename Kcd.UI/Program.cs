@@ -17,7 +17,7 @@ builder.Services.AddTransient<JwtAuthorizationMessageHandler>();
 
 // Using configuration settings for HttpClient base addresses
 builder.Services.AddHttpClient();
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7268/api/") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7268/api/v1/") });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 

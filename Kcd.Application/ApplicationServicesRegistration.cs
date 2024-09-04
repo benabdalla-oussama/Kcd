@@ -11,7 +11,7 @@ public static class ApplicationServicesRegistration
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         // Register Application Services
-        services.AddScoped<IUserApplicationService, ApplicationService>();
+        services.AddScoped<IApplicationService, ApplicationService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IFileValidator, FileValidator>();
         services.AddScoped<IAvatarService, AvatarService>();

@@ -4,7 +4,10 @@ using Kcd.Common.Exceptions;
 
 namespace Kcd.Application.Interfaces;
 
-public interface IUserApplicationService
+/// <summary>
+/// Interface for application service handling user applications.
+/// </summary>
+public interface IApplicationService
 {
     /// <summary>
     /// Applies a new user application.

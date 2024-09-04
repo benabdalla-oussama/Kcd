@@ -5,27 +5,35 @@ using Stayr.Backend.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Register application services
 builder.ApiServiesRegistration();
 builder.AddHealthChecks();
 
+// Configure CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("all", builder => builder.AllowAnyOrigin()
-    .AllowAnyHeader()
-    .AllowAnyMethod());
+    options.AddPolicy("all", builder => builder
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod());
 });
 
-// Add services to the container.
-
+// Configure Serilog for logging
 builder.Host.UseSerilog((context, loggerConfig) =>
-loggerConfig.ReadFrom.Configuration(context.Configuration));
+    loggerConfig.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddControllers();
+
+// Configure Swagger/OpenAPI for API documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Kcd API", Version = "v1" });
+    option.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Kcd API",
+        Version = "v1"
+    });
+
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -35,6 +43,7 @@ builder.Services.AddSwaggerGen(option =>
         BearerFormat = "JWT",
         Scheme = "Bearer"
     });
+
     option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -42,23 +51,24 @@ builder.Services.AddSwaggerGen(option =>
             {
                 Reference = new OpenApiReference
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
             },
-            new string[]{}
+            new string[] {}
         }
     });
 });
 
+// Add global exception handling
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
+// Map default endpoints (health, alive)
 app.MapDefaultEndpoints();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -80,4 +90,9 @@ app.MapControllers();
 
 app.Run();
 
-//ApplyMigration();
+// Apply migrations (if needed)
+app.ApplyMigrations();
+
+public partial class Program
+{
+}

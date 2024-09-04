@@ -9,9 +9,10 @@ namespace Kcd.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ApplicationsController(IUserApplicationService userApplicationService, ILogger<ApplicationsController> logger) : BaseController
+[Route("v1/")]
+public class ApplicationsController(IApplicationService applicationService, ILogger<ApplicationsController> logger) : BaseController
 {
-    private readonly IUserApplicationService _userApplicationService = userApplicationService;
+    private readonly IApplicationService _applicationService = applicationService;
     private readonly ILogger<ApplicationsController> _logger = logger;
 
     /// <summary>
@@ -25,7 +26,7 @@ public class ApplicationsController(IUserApplicationService userApplicationServi
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetApplications([FromQuery] ApplicationStatus? status = null)
     {
-        var applications = await _userApplicationService.GetApplicationsAsync(status);
+        var applications = await _applicationService.GetApplicationsAsync(status);
         return Ok(applications);
     }
 
@@ -47,7 +48,7 @@ public class ApplicationsController(IUserApplicationService userApplicationServi
             return BadRequest(ModelState);
         }
 
-        var createdApplication = await _userApplicationService.ApplyAsync(request);
+        var createdApplication = await _applicationService.ApplyAsync(request);
         return CreatedAtAction(nameof(Apply), new { id = createdApplication.Id }, createdApplication);
     }
 
@@ -63,7 +64,7 @@ public class ApplicationsController(IUserApplicationService userApplicationServi
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ApproveApplication(Guid id)
     {
-        await _userApplicationService.ApproveApplicationAsync(id);
+        await _applicationService.ApproveApplicationAsync(id);
         return Ok();
     }
 
@@ -79,7 +80,7 @@ public class ApplicationsController(IUserApplicationService userApplicationServi
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RejectApplication(Guid id)
     {
-        await _userApplicationService.RejectApplicationAsync(id);
+        await _applicationService.RejectApplicationAsync(id);
         return Ok();
     }
 }

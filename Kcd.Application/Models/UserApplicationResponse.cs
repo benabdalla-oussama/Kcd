@@ -2,6 +2,9 @@
 
 namespace Kcd.Application.Models;
 
+/// <summary>
+/// Represents a user application response.
+/// </summary>
 public class UserApplicationResponse
 {
     public Guid Id { get; set; }

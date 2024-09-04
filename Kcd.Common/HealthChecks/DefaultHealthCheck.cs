@@ -2,6 +2,13 @@
 
 namespace Kcd.Common.HealthChecks;
 
+/// <summary>
+/// An abstract base class for implementing custom health checks in an application.
+/// </summary>
+/// <remarks>
+/// This class provides a foundation for creating health checks by encapsulating common functionality and managing the health check name.
+/// Derived classes must implement the <see cref="CheckHealthAsync"/> method to define the actual health check logic.
+/// </remarks>
 public abstract class DefaultHealthCheck : IHealthCheck
 {
     private readonly string _name;

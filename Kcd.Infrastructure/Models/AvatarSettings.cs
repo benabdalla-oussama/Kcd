@@ -8,5 +8,5 @@ public class AvatarSettings
     public string BlobStorageConnectionString { get; set; }
     public string BlobContainerName { get; set; }
     public string[] AllowedExtensions { get; set; } = { "jpg", "jpeg", "png" };
-    public long MaxFileSizeInBytes { get; set; } = 10 * 1024 * 1024; // 10MB
+    public long MaxFileSizeInBytes { get; set; } = 1024 * 1024; // 1MB
 }

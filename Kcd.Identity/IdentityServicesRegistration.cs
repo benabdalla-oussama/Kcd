@@ -47,6 +47,13 @@ public static class IdentityServicesRegistration
         return services;
     }
 
+    public static void ApplyIdentityMigrations(this IServiceProvider services)
+    {
+        // Apply migrations for Identity database context
+        var identityDbContext = services.GetRequiredService<IdentityDatabaseContext>();
+        identityDbContext.Database.Migrate();
+    }
+
     public static IServiceCollection AddIdentityHealthCheks(this IServiceCollection services)
     {
         // Register identity health checks

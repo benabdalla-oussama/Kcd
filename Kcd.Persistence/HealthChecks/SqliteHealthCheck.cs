@@ -5,6 +5,10 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Kcd.Persistence.HealthChecks;
 
+/// <summary>
+/// A health check class for verifying the status of an SQLite database connection.
+/// Inherits from <see cref="DefaultHealthCheck"/> and reports the health status based on the database connectivity.
+/// </summary>
 public class SqliteHealthCheck(IConfiguration configuration) : DefaultHealthCheck("SQLite")
 {
     private readonly string _connectionString = configuration.GetConnectionString("HrDatabaseConnectionString");

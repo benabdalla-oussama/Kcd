@@ -1,4 +1,5 @@
 ﻿using Kcd.Infrastructure.Models;
+using Kcd.Infrastructure.Services;
 using Kcd.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton<IAvatarStorageStrategy, FileSystemAvatarStorageStrategy>();
         services.AddSingleton<IAvatarStorageStrategy, BlobAvatarStorageStrategy>();
         services.AddSingleton<IAvatarStorageStrategy, DatabaseAvatarStorageStrategy>();
+        services.AddSingleton<IEmailSender, LoggingEmailSender>();
 
         return services;
     }
