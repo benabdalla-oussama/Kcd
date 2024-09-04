@@ -49,6 +49,9 @@ To set up and run the project, follow these steps:
      dotnet run
      ```
    - The UI should be available on `http://localhost:5058` (or your configured port).
+   - Note: For testing purposes, a seed admin user is available with the following credentials:
+     - **`Email`**: `admin@admin.com`
+     - **`Password`**: `Azerty123456789!`
 
 4. **Run Tests**:
    - Navigate to the respective test project directory.
@@ -96,7 +99,7 @@ For performance analysis, consider using these tools:
 
 ## Notes
 
-- **SQLite Database Cleanup**: The SQLite database is recreated on each test run to ensure a fresh state.
+- **SQLite Database Cleanup Integration Test**: The SQLite database is recreated on each test run to ensure a fresh state.
 - **Perspectives**:
   - **Improvements**: Consider adding features like password reset, email invitations, and enhanced user management based on requirements.
   - **CI/CD Pipelines**: Implementing continuous integration and continuous deployment (CI/CD) pipelines can streamline development and deployment processes.
