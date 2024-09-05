@@ -1,5 +1,7 @@
-﻿using Kcd.Application.Models;
+﻿using Bogus;
+using Kcd.Application.Models;
 using Kcd.Common;
+using Kcd.Domain;
 using Kcd.Identity.DatabaseContext;
 using Kcd.Identity.Models;
 using Kcd.Persistence.DatabaseContext;
@@ -22,6 +24,7 @@ public class ApplicationsControllerTests
     private IServiceScope _scope;
     private IdentityDatabaseContext _identityContext;
     private UserApplicationDatabaseContext _userApplicationContext;
+    private Faker<UserApplication> _userApplicationFaker;
 
     [SetUp]
     public async Task SetUp()
@@ -43,13 +46,20 @@ public class ApplicationsControllerTests
         _identityContext = _scope.ServiceProvider.GetRequiredService<IdentityDatabaseContext>();
         _userApplicationContext = _scope.ServiceProvider.GetRequiredService<UserApplicationDatabaseContext>();
         CleanupDatabase();
+
+        // Initialize Faker for generating test data
+        _userApplicationFaker = new Faker<UserApplication>()
+            .RuleFor(u => u.Email, f => f.Internet.Email())
+            .RuleFor(u => u.Name, f => f.Name.FullName())
+            .RuleFor(u => u.Country, f => f.Address.Country())
+            .RuleFor(u => u.Company, f => f.Company.CompanyName());
     }
 
     private async Task<AuthResponse> GetAuthTokenAsync()
     {
         var request = new AuthRequest
         {
-            Email = "admin@admin.com",
+            Email = Constants.DefaultAdminEmail,
             Password = Constants.DefaultPassword
         };
 
@@ -94,18 +104,18 @@ public class ApplicationsControllerTests
     public async Task Apply_ShouldCreateApplication_WhenAuthorized()
     {
         // Arrange
-        var email = "john.doe@example.com";
+        var userApplication = _userApplicationFaker.Generate();
         var result = await GetAuthTokenAsync();
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.Token);
 
         var url = "/api/applications";
         var content = new MultipartFormDataContent
-            {
-                { new StringContent("John Doe"), "Name" },
-                { new StringContent(email), "Email" },
-                { new StringContent("Netherlands"), "Country" },
-                { new StringContent("yellowtail"), "Company " }
-            };
+        {
+            { new StringContent(userApplication.Name), "Name" },
+            { new StringContent(userApplication.Email), "Email" },
+            { new StringContent(userApplication.Country), "Country" },
+            { new StringContent(userApplication.Company), "Company" }
+        };
 
         // Act
         var response = await _client.PostAsync(url, content);
@@ -114,7 +124,7 @@ public class ApplicationsControllerTests
         response.EnsureSuccessStatusCode();
         Assert.AreEqual(System.Net.HttpStatusCode.Created, response.StatusCode);
 
-        // check if application was created 
+        // Check if application was created 
         var getResponse = await _client.GetAsync("/api/applications");
         getResponse.EnsureSuccessStatusCode();
 
@@ -122,18 +132,24 @@ public class ApplicationsControllerTests
         var responseBody = await getResponse.Content.ReadAsStringAsync();
         var applications = JsonSerializer.Deserialize<List<UserApplicationResponse>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-        // Assert - Check if the email exists in the response
+        // Assert - Check if the application with the generated email exists in the response
         Assert.IsNotNull(applications);
-        Assert.IsTrue(applications.Any(a => a.Email == email), $"The application with the email {email} was not found.");
+        Assert.IsTrue(applications.Any(a => a.Email == userApplication.Email), $"The application with the email {userApplication.Email} was not found.");
     }
 
     [TearDown]
     public async Task TearDown()
     {
-        await _sqlContainer.DisposeAsync();
-        _scope.Dispose();
-        _client.Dispose();
-        _factory.Dispose();
+        try
+        {
+            await _sqlContainer.DisposeAsync();
+            _scope.Dispose();
+            _client.Dispose();
+            _factory.Dispose();
+        }
+        catch // Ignore dispose issues.
+        {
+        }
     }
 
     private void CleanupDatabase()

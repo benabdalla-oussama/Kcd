@@ -10,6 +10,7 @@ public class Constants
     /// </remarks>
     /// </summary>
     public static string DefaultPassword = "Azerty123456789!.";
+    public static string DefaultAdminEmail = "admin@admin.com";
 
     //Claims
     public static string Country_Claim_Type = "country";

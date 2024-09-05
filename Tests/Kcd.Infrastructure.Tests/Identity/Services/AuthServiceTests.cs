@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Bogus;
+using FluentAssertions;
 using Kcd.Common;
 using Kcd.Common.Enums;
 using Kcd.Common.Exceptions;
@@ -24,6 +25,7 @@ public class AuthServiceTests
     private Mock<ILogger<AuthService>> _loggerMock;
     private Mock<IOptions<JwtSettings>> _jwtSettingsMock;
     private AuthService _authService;
+    private Faker _faker;
 
     [SetUp]
     public void Setup()
@@ -50,13 +52,19 @@ public class AuthServiceTests
             _clockMock.Object,
             _loggerMock.Object,
             _jwtSettingsMock.Object);
+
+        _faker = new Faker();
     }
 
     [Test]
     public void LoginAsync_ShouldThrowNotFoundException_WhenUserNotFound()
     {
         // Arrange
-        var request = new AuthRequest { Email = "test@example.com", Password = "Password123" };
+        var request = new AuthRequest
+        {
+            Email = _faker.Internet.Email(),  // Using Faker for generating email
+            Password = _faker.Internet.Password()  // Using Faker for generating password
+        };
         _userManagerMock.Setup(x => x.FindByEmailAsync(request.Email)).ReturnsAsync((KcdUser)null);
 
         // Act
@@ -71,8 +79,12 @@ public class AuthServiceTests
     public void LoginAsync_ShouldThrowBadRequestException_WhenPasswordIsIncorrect()
     {
         // Arrange
-        var request = new AuthRequest { Email = "test@example.com", Password = "Password123" };
-        var user = new KcdUser { Email = "test@example.com", UserName = "testuser" };
+        var request = new AuthRequest
+        {
+            Email = _faker.Internet.Email(),
+            Password = _faker.Internet.Password()
+        };
+        var user = new KcdUser { Email = request.Email, UserName = _faker.Internet.UserName() };
         _userManagerMock.Setup(x => x.FindByEmailAsync(request.Email)).ReturnsAsync(user);
         _signInManagerMock.Setup(x => x.CheckPasswordSignInAsync(user, request.Password, false))
             .ReturnsAsync(SignInResult.Failed);
@@ -89,8 +101,13 @@ public class AuthServiceTests
     public async Task RegisterAsync_ShouldReturnUserId_WhenRegistrationIsSuccessful()
     {
         // Arrange
-        var request = new RegistrationRequest { Email = "test@example.com", UserName = "testuser", Name = "Test User" };
-        var user = new KcdUser { Email = "test@example.com", UserName = "testuser" };
+        var request = new RegistrationRequest
+        {
+            Email = _faker.Internet.Email(),
+            UserName = _faker.Internet.UserName(),
+            Name = _faker.Name.FullName()
+        };
+        var user = new KcdUser { Email = request.Email, UserName = request.UserName };
         _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<KcdUser>(), Constants.DefaultPassword)).ReturnsAsync(IdentityResult.Success);
         _userManagerMock.Setup(x => x.AddToRoleAsync(user, Roles.User.ToString())).ReturnsAsync(IdentityResult.Success);
 
@@ -106,7 +123,12 @@ public class AuthServiceTests
     public void RegisterAsync_ShouldThrowBadRequestException_WhenRegistrationFails()
     {
         // Arrange
-        var request = new RegistrationRequest { Email = "test@example.com", UserName = "testuser", Name = "Test User" };
+        var request = new RegistrationRequest
+        {
+            Email = _faker.Internet.Email(),
+            UserName = _faker.Internet.UserName(),
+            Name = _faker.Name.FullName()
+        };
         var errors = new[] { new IdentityError { Description = "Error" } };
         _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<KcdUser>(), Constants.DefaultPassword))
             .ReturnsAsync(IdentityResult.Failed(errors));

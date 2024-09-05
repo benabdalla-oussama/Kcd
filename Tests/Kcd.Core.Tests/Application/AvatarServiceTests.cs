@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Bogus;
 using FluentAssertions;
 using Kcd.Application.Services;
 using Kcd.Common.Enums;
@@ -21,6 +22,7 @@ public class AvatarServiceTests
     private Mock<IOptions<AvatarSettings>> _mockOptions;
     private Mock<ILogger<AvatarService>> _mockLogger;
     private AvatarService _avatarService;
+    private Faker _faker;
 
     [SetUp]
     public void SetUp()
@@ -41,6 +43,8 @@ public class AvatarServiceTests
             _mockOptions.Object,
             _mockLogger.Object
         );
+
+        _faker = new Faker(); // Initialize Faker for generating fake data
     }
 
     [Test]
@@ -48,8 +52,8 @@ public class AvatarServiceTests
     {
         // Arrange
         var avatarStream = new MemoryStream();
-        var fileName = "test-avatar.png";
-        var contentType = "image/png";
+        var fileName = _faker.System.FileName("png"); // Generate fake file name with png extension
+        var contentType = _faker.System.MimeType(); // Generate fake mime type
         var strategy = AvatarStorageStrategy.Database;
         var guid = Guid.NewGuid();
         var avatarModel = new AvatarModel { Id = guid, FileName = fileName, ContentType = contentType, StorageStrategy = strategy };
@@ -80,8 +84,10 @@ public class AvatarServiceTests
     {
         // Arrange
         var avatarId = Guid.NewGuid().ToString();
-        var avatar = new Avatar { Id = Guid.Parse(avatarId), FileName = "test-avatar.png", ContentType = "image/png" };
-        var avatarModel = new AvatarModel { FileName = "test-avatar.png", ContentType = "image/png" };
+        var fileName = _faker.System.FileName("png"); // Generate fake file name
+        var contentType = _faker.System.MimeType(); // Generate fake mime type
+        var avatar = new Avatar { Id = Guid.Parse(avatarId), FileName = fileName, ContentType = contentType };
+        var avatarModel = new AvatarModel { FileName = fileName, ContentType = contentType };
         var avatarStream = new MemoryStream();
 
         var mockStrategy = new Mock<IAvatarStorageStrategy>();
@@ -95,12 +101,12 @@ public class AvatarServiceTests
             .ReturnsAsync(avatar);
 
         // Act
-        var (stream, contentType, fileName) = await _avatarService.GetAvatarAsync(avatarId);
+        var (stream, returnedContentType, returnedFileName) = await _avatarService.GetAvatarAsync(avatarId);
 
         // Assert
         stream.Should().NotBeNull();
-        contentType.Should().Be("image/png");
-        fileName.Should().Be("test-avatar.png");
+        returnedContentType.Should().Be(contentType);
+        returnedFileName.Should().Be(fileName);
     }
 
     [Test]

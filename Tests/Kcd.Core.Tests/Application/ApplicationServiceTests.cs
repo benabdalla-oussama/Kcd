@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Bogus;
 using FluentAssertions;
 using Kcd.Application.Models;
 using Kcd.Application.Services;
@@ -25,6 +26,7 @@ public class ApplicationServiceTests
     private Mock<IEmailSender> _emailSender;
     private Mock<ILogger<ApplicationService>> _logger;
     private ApplicationService _service;
+    private Faker _faker;
 
     [SetUp]
     public void Setup()
@@ -44,13 +46,15 @@ public class ApplicationServiceTests
             _emailSender.Object,
             _logger.Object
         );
+
+        _faker = new Faker();
     }
 
     [Test]
     public async Task ApplyAsync_ShouldThrowBadRequestException_WhenApplicationAlreadyExists()
     {
         // Arrange
-        var request = new UserApplicationRequest { Email = "test@example.com" };
+        var request = new UserApplicationRequest { Email = _faker.Internet.Email() }; // Generate fake email
         _repository.Setup(r => r.GetUserApplicationByEmail(request.Email, It.IsAny<CancellationToken>()))
                    .ReturnsAsync(new UserApplication());
 
@@ -67,8 +71,8 @@ public class ApplicationServiceTests
         // Arrange
         var request = new UserApplicationRequest
         {
-            Email = "test@example.com",
-            Avatar = CreateMockFormFile("avatar", "avatar.png")
+            Email = _faker.Internet.Email(),
+            Avatar = CreateMockFormFile(_faker.System.FileName(), "image/png") // Generate fake file name and content type
         };
         var userApplication = new UserApplication();
         _repository.Setup(r => r.GetUserApplicationByEmail(request.Email, It.IsAny<CancellationToken>()))
@@ -81,10 +85,10 @@ public class ApplicationServiceTests
                .Returns(userApplication);
 
         _mapper.Setup(m => m.Map<UserApplicationResponse>(userApplication))
-           .Returns(new UserApplicationResponse
-           {
-               AvatarId = "avatar-id"
-           });
+               .Returns(new UserApplicationResponse
+               {
+                   AvatarId = "avatar-id"
+               });
 
         // Act
         var result = await _service.ApplyAsync(request);
@@ -114,7 +118,7 @@ public class ApplicationServiceTests
     {
         // Arrange
         var applicationId = Guid.NewGuid();
-        var application = new UserApplication { Email = "test@example.com", Status = ApplicationStatus.Pending };
+        var application = new UserApplication { Email = _faker.Internet.Email(), Status = ApplicationStatus.Pending };
         _repository.Setup(r => r.GetByIdAsync(applicationId, It.IsAny<CancellationToken>()))
                    .ReturnsAsync(application);
         _authService.Setup(a => a.RegisterAsync(It.IsAny<RegistrationRequest>()))
@@ -149,15 +153,15 @@ public class ApplicationServiceTests
     {
         // Arrange
         var applications = new List<UserApplication>
-            {
-                new UserApplication { Id = Guid.NewGuid(), Email = "test1@example.com" },
-                new UserApplication { Id = Guid.NewGuid(), Email = "test2@example.com" }
-            };
+        {
+            new UserApplication { Id = Guid.NewGuid(), Email = _faker.Internet.Email() }, // Generate fake email
+            new UserApplication { Id = Guid.NewGuid(), Email = _faker.Internet.Email() }
+        };
         var applicationResponses = new List<UserApplicationResponse>
-            {
-                new UserApplicationResponse { Id = applications[0].Id, Email = applications[0].Email },
-                new UserApplicationResponse { Id = applications[1].Id, Email = applications[1].Email }
-            };
+        {
+            new UserApplicationResponse { Id = applications[0].Id, Email = applications[0].Email },
+            new UserApplicationResponse { Id = applications[1].Id, Email = applications[1].Email }
+        };
         _repository.Setup(r => r.GetApplicationsAsync(null, It.IsAny<CancellationToken>()))
                    .ReturnsAsync(applications);
         _mapper.Setup(m => m.Map<IEnumerable<UserApplicationResponse>>(applications))
