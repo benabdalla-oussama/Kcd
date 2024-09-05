@@ -9,13 +9,15 @@ export let options = {
 
 const BASE_URL = 'http://localhost:5160';
 const USERNAME = 'admin@admin.com';
-const PASSWORD = 'Azerty123456789!'; 
+const PASSWORD = 'Azerty123456789!.'; 
 
 export default function () {
     group('User Login and Get Token', function () {
-        let loginRes = http.post(`${BASE_URL}/api/auth/login`, {
+        let loginRes = http.post(`${BASE_URL}/api/auth/login`, JSON.stringify({
             email: USERNAME,
             password: PASSWORD,
+        }), {
+            headers: { 'Content-Type': 'application/json' },
         });
 
         check(loginRes, {
