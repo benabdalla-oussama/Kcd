@@ -54,7 +54,7 @@ To set up and run the project, follow these steps:
    - The UI should be available on `http://localhost:5058` (or your configured port).
    - Note: For testing purposes, a seed admin user is available with the following credentials:
      - **`Email`**: `admin@admin.com`
-     - **`Password`**: `Azerty123456789!`
+     - **`Password`**: `Azerty123456789!.`
 
 4. **Run Tests**:
    - Navigate to the respective test project directory.
@@ -108,9 +108,19 @@ For performance analysis, consider using these tools:
 - **BenchmarkDotNet**: Ideal for micro-benchmarking .NET code to profile and optimize specific methods or code snippets.
 - **k6**: Developer-centric tool for load testing with scripting capabilities.
 
+## Assumptions
+
+- **User Application Process**: Users submit an application without initial login credentials. Applications are stored in SQLite and moved to SQL Server upon approval.
+- **Authentication & Authorization**: ASP.NET Identity manages authentication. No integration with external identity providers is included in this version but could be added later.
+- **Admin Role**: The Admin role is responsible for reviewing, approving, or rejecting applications. No other roles or intermediate validation processes are implemented.
+- **Avatar Upload**: Avatar upload is optional. Images are stored in the file system, database or Azure Blob Storage based on the configured strategy, with future potential for additional strategies (ftp ...).
+- **Optional Fields**: "Company", "Referal" and "Avatar" are optional and do not affect the application process if left empty.
+- **Performance Testing**: Performance testing with k6 focuses on the load and stress handling of the endpoints (added one exemple).
+       
 ## Notes
 
 - **SQLite Database Cleanup Integration Test**: The SQLite database is recreated on each test run to ensure a fresh state.
+  
 - **Perspectives**:
   - **Improvements**: Consider adding features like password reset, email invitations, and enhanced user management based on requirements.
   - **CI/CD Pipelines**: Implementing continuous integration and continuous deployment (CI/CD) pipelines can streamline development and deployment processes.
